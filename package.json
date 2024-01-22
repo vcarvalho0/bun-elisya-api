@@ -2,8 +2,10 @@
   "name": "elysia-api",
   "version": "1.0.50",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts"
+    "dev": "bun run --watch src/index.ts",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:destroy": "docker-compose down --volumes --remove-orphans"
   },
   "dependencies": {
     "@elysiajs/swagger": "^0.8.3",
