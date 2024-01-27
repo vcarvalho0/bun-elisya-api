@@ -2,6 +2,8 @@ import { Elysia } from "elysia";
 import logger from "./logger";
 import { cors } from "@elysiajs/cors";
 import { swagger } from "@elysiajs/swagger";
+import { userRoutes } from "./routes/user";
+import { signOut } from "./routes/sign-out";
 
 const app = new Elysia()
   .use(
@@ -22,6 +24,8 @@ const app = new Elysia()
       })
     )
   )
+  .use(userRoutes)
+  .use(signOut)
   .listen(process.env.PORT);
 
 logger.info(
