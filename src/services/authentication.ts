@@ -36,6 +36,8 @@ export const auth = new Elysia()
           httpOnly: true,
           path: "/"
         });
+
+        return token;
       },
 
       isAuthenticated: async () => {
