@@ -18,6 +18,7 @@
     "@elysiajs/jwt": "^0.8.0",
     "@elysiajs/swagger": "^0.8.3",
     "@prisma/client": "^5.8.1",
+    "dayjs": "^1.11.10",
     "elysia": "latest",
     "pino": "^8.17.2"
   },

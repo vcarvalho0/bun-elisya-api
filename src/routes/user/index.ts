@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
 import { prisma } from "@src/db";
-import { auth } from "@src/middleware/authentication";
+import { auth } from "@src/services/authentication";
 import { comparePasswords, hashPassword } from "@src/services/hash-password";
 import {
   AlreadyExistError,
@@ -25,7 +25,7 @@ export const userRoutes = new Elysia()
       return await prisma.user.create({
         data: {
           email: body.email,
-          name: body.name,
+          username: body.username,
           password: hash
         }
       });
@@ -33,14 +33,14 @@ export const userRoutes = new Elysia()
     {
       body: t.Object({
         email: t.String(),
-        name: t.String(),
+        username: t.String(),
         password: t.String()
       })
     }
   )
   .post(
     "/login",
-    async ({ body, authenticateUser }) => {
+    async ({ body, authenticateUser, createRefreshToken }) => {
       const user = await prisma.user.findUnique({
         where: { email: body.email }
       });
@@ -49,11 +49,21 @@ export const userRoutes = new Elysia()
         throw new InvalidCredentialsError();
       }
 
-      await authenticateUser({
+      const token = await authenticateUser({
         sub: user.id
       });
 
-      return user;
+      await prisma.token.deleteMany({
+        where: {
+          userId: user.id
+        }
+      });
+
+      const refreshToken = await createRefreshToken({
+        sub: user.id
+      });
+
+      return { token, refreshToken };
     },
     {
       body: t.Object({
@@ -62,8 +72,8 @@ export const userRoutes = new Elysia()
       })
     }
   )
-  .get("/me", async ({ isAuthenticated }) => {
-    const payload = await isAuthenticated();
+  .get("/me", async ({ verifyAuthenticaUser }) => {
+    const payload = await verifyAuthenticaUser();
 
     const userInfo = await prisma.user.findUnique({
       where: { id: payload.sub }
