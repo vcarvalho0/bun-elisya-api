@@ -4,6 +4,7 @@ import { cookie } from "@elysiajs/cookie";
 import { Unauthorized } from "@src/helpers/errors";
 import { prisma } from "@src/db";
 import dayjs from "dayjs";
+import { env } from "@src/env";
 
 const payloadSchema = t.Object({
   sub: t.String()
@@ -23,17 +24,17 @@ export const auth = new Elysia()
   .use(
     jwt({
       name: "jwt",
-      secret: process.env.SECRET,
+      secret: env.SECRET,
       schema: payloadSchema,
-      exp: process.env.EXP_DATE
+      exp: env.EXP_DATE
     })
   )
   .use(
     jwt({
       name: "refreshJwt",
-      secret: process.env.REFRESH_TOKEN_SECRET,
+      secret: env.REFRESH_TOKEN_SECRET,
       schema: payloadSchema,
-      exp: process.env.REFRESH_TOKEN_EXP_DATE
+      exp: env.REFRESH_TOKEN_EXP_DATE
     })
   )
   .use(cookie())
@@ -50,7 +51,7 @@ export const auth = new Elysia()
         return token;
       },
 
-      verifyAuthenticaUser: async () => {
+      verifyAuthenticateUser: async () => {
         const payload = await jwt.verify(cookie.access_token);
 
         if (!payload) {
@@ -64,7 +65,7 @@ export const auth = new Elysia()
         const refreshToken = await refreshJwt.sign(payload);
 
         const refreshTokenExpiresDate = dayjs()
-          .add(process.env.EXPIRE_REFRESH_TOKEN_DB, "days")
+          .add(env.EXPIRE_REFRESH_TOKEN_DB, "days")
           .toDate();
 
         await prisma.token.create({
@@ -76,16 +77,6 @@ export const auth = new Elysia()
         });
 
         return refreshToken;
-      },
-
-      verifyRefreshToken: async (refreshToken: string) => {
-        const isTokenValid = await refreshJwt.verify(refreshToken);
-
-        if (!isTokenValid) {
-          throw new Unauthorized();
-        }
-
-        return isTokenValid;
       }
     };
   });

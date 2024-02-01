@@ -5,6 +5,7 @@ import { swagger } from "@elysiajs/swagger";
 import { userRoutes } from "./routes/user";
 import { signOut } from "./routes/sign-out";
 import { refreshTokenRoute } from "./routes/refresh-token";
+import { env } from "./env";
 
 const app = new Elysia()
   .use(
@@ -30,7 +31,7 @@ const app = new Elysia()
       .use(refreshTokenRoute)
       .use(signOut)
   )
-  .listen(process.env.PORT);
+  .listen(env.PORT);
 
 logger.info(
   `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`

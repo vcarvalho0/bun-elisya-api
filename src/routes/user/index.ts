@@ -72,8 +72,8 @@ export const userRoutes = new Elysia()
       })
     }
   )
-  .get("/me", async ({ verifyAuthenticaUser }) => {
-    const payload = await verifyAuthenticaUser();
+  .get("/me", async ({ verifyAuthenticateUser }) => {
+    const payload = await verifyAuthenticateUser();
 
     const userInfo = await prisma.user.findUnique({
       where: { id: payload.sub }
