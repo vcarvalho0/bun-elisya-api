@@ -5,6 +5,7 @@ import { swagger } from "@elysiajs/swagger";
 import { userRoutes } from "./routes/user";
 import { signOut } from "./routes/sign-out";
 import { refreshTokenRoute } from "./routes/refresh-token";
+import { recoverPasswordLinkRoute } from "./routes/recover-password-link";
 import { env } from "./env";
 
 const app = new Elysia()
@@ -29,6 +30,7 @@ const app = new Elysia()
       )
       .use(userRoutes)
       .use(refreshTokenRoute)
+      .use(recoverPasswordLinkRoute)
       .use(signOut)
   )
   .listen(env.PORT);
