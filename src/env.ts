@@ -2,6 +2,7 @@ import { z } from "zod";
 
 const envSchema = z.object({
   PORT: z.coerce.number().default(8080),
+  RESEND_API_KEY: z.string(),
   SECRET: z.string(),
   EXP_DATE: z.string(),
   REFRESH_TOKEN_SECRET: z.string(),
